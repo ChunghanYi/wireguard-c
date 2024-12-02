@@ -8,6 +8,7 @@ $ __./genkey.sh__ <br>
 ## How to build
 $ __./build_wg.sh__
 ## How to run
+Caution: You must modify the etc/wireguard.conf file before executing the command.
 $ cd src <br>
 * debug mode <br>
 $ __sudo ./wireguard -d /etc/wireguard.conf__ <br>
@@ -15,5 +16,9 @@ $ __sudo ./wireguard -d /etc/wireguard.conf__ <br>
 $ __sudo ./wireguard -D__ <br>
 ## Reference codes
   https://github.com/smartalock/wireguard-lwip <br>
+  The code is copyrighted under BSD 3 clause Copyright (c) 2021 Daniel Hope (www.floorsense.nz)
 ## My own blog for wireguard analysis
   https://slowbootkernelhacks.blogspot.com/2020/09/wireguard-vpn.html <br>
+
+  WireGuard is a registered trademark of Jason A. Donenfeld.
+

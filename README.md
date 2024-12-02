@@ -8,7 +8,7 @@ $ __./genkey.sh__ <br>
 ## How to build
 $ __./build_wg.sh__
 ## How to run
-Caution: You must modify the etc/wireguard.conf file before executing the command.
+Caution: You must copy the ./etc/wireguard.conf file to the /etc directory before executing the command.<br> 
 $ cd src <br>
 * debug mode <br>
 $ __sudo ./wireguard -d /etc/wireguard.conf__ <br>
@@ -20,5 +20,5 @@ $ __sudo ./wireguard -D__ <br>
 ## My own blog for wireguard analysis
   https://slowbootkernelhacks.blogspot.com/2020/09/wireguard-vpn.html <br>
 
-  WireGuard is a registered trademark of Jason A. Donenfeld.
+  (***) WireGuard is a registered trademark of Jason A. Donenfeld.
 

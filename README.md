@@ -14,11 +14,14 @@ $ cd src <br>
 $ __sudo ./wireguard -d /etc/wireguard.conf__ <br>
 * daemon mode <br>
 $ __sudo ./wireguard -D__ <br>
+## Limitations
+  It only works in IPv4 environments.<br>
+  Only one tunnel is created (client only).<br>
 ## Reference codes
   https://github.com/smartalock/wireguard-lwip <br>
   The code is copyrighted under BSD 3 clause Copyright (c) 2021 Daniel Hope (www.floorsense.nz)
 ## My own blog for wireguard analysis
   https://slowbootkernelhacks.blogspot.com/2020/09/wireguard-vpn.html <br>
-
+  <br>
   (***) WireGuard is a registered trademark of Jason A. Donenfeld.
 

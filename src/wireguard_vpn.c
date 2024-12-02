@@ -78,7 +78,7 @@ int wireguard_setup(void) {
 	// Initialise the first WireGuard peer structure
 	wireguardif_peer_init(&peer);
 	memset(peer.public_key, 0, WG_KEY_LEN_BASE64);
-    memcpy(peer.public_key, config.public_key, WG_KEY_LEN_BASE64-1);
+	memcpy(peer.public_key, config.public_key, WG_KEY_LEN_BASE64-1);
 	peer.preshared_key = NULL;
 
 	// Allow all IPs through tunnel

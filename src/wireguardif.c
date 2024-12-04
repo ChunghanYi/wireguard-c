@@ -168,10 +168,17 @@ static err_t wireguardif_output_to_peer(struct netif *netif, struct pbuf *q,
 			// The buffer needs to be allocated from "transport" pool to leave room for LwIP generated IP headers
 			// The IP packet consists of 16 byte header (struct message_transport_data), data padded upto 16 byte boundary + encrypted auth tag (16 bytes)
 			pbuf = (struct pbuf *)malloc(sizeof(struct pbuf));
-			pbuf->payload = (void *)malloc(header_len + padded_len + WIREGUARD_AUTHTAG_LEN);
-			pbuf->len = header_len + padded_len + WIREGUARD_AUTHTAG_LEN;
-			pbuf->tot_len = pbuf->len;
 			if (pbuf) {
+				pbuf->payload = (void *)malloc(header_len + padded_len + WIREGUARD_AUTHTAG_LEN);
+				if (pbuf->payload == NULL) {
+					free(pbuf);
+					log_message_level(2, "(%s) Cannot allocate an area for payload.", __func__);
+					result = ERR_MEM;
+					return result;
+				}
+				pbuf->len = header_len + padded_len + WIREGUARD_AUTHTAG_LEN;
+				pbuf->tot_len = pbuf->len;
+
 				// Note: allocating pbuf from RAM above guarantees that the pbuf is in one section and not chained
 				// - i.e payload points to the contiguous memory region
 				memset(pbuf->payload, 0, pbuf->tot_len);
@@ -328,10 +335,16 @@ static void wireguardif_process_data_message(struct wireguard_device *device, st
 
 			// We don't know the unpadded size until we have decrypted the packet and validated/inspected the IP header
 			pbuf = (struct pbuf *)malloc(sizeof(struct pbuf));
-			pbuf->payload = (void *)malloc(src_len - WIREGUARD_AUTHTAG_LEN);
-			pbuf->len = src_len - WIREGUARD_AUTHTAG_LEN;
-			pbuf->tot_len = pbuf->len;
 			if (pbuf) {
+				pbuf->payload = (void *)malloc(src_len - WIREGUARD_AUTHTAG_LEN);
+				if (pbuf->payload == NULL) {
+					free(pbuf);
+					log_message_level(2, "(%s) Can not allocate an area for payload.", __func__);
+					return;
+				}
+				pbuf->len = src_len - WIREGUARD_AUTHTAG_LEN;
+				pbuf->tot_len = pbuf->len;
+
 				// Decrypt the packet
 				memset(pbuf->payload, 0, pbuf->tot_len);
 				if (wireguard_decrypt_packet(pbuf->payload, src, src_len, nonce, keypair)) {
@@ -441,10 +454,14 @@ static struct pbuf *wireguardif_initiate_handshake(struct wireguard_device *devi
 	if (wireguard_create_handshake_initiation(device, peer, msg)) {
 		// Send this packet out!
 		pbuf = (struct pbuf *)malloc(sizeof(struct pbuf));
-		pbuf->payload = (void *)malloc(sizeof(struct message_handshake_initiation));
-		pbuf->len = sizeof(struct message_handshake_initiation);
-		pbuf->tot_len = pbuf->len;   //TBD
 		if (pbuf) {
+			pbuf->payload = (void *)malloc(sizeof(struct message_handshake_initiation));
+			if (pbuf->payload == NULL) {
+				free(pbuf);
+				return NULL;
+			}
+			pbuf->len = sizeof(struct message_handshake_initiation);
+			pbuf->tot_len = pbuf->len;   //TBD
 			if (memcpy(pbuf->payload, msg, sizeof(struct message_handshake_initiation))) {  //ERR_OK
 				// OK!
 			} else {
@@ -471,12 +488,17 @@ static void wireguardif_send_handshake_response(struct wireguard_device *device,
 
 		wireguard_start_session(peer, false);
 
-		// Send this packet out!
 		pbuf = (struct pbuf *)malloc(sizeof(struct pbuf));
-		pbuf->payload = (void *)malloc(sizeof(struct message_handshake_response));
-		pbuf->len = sizeof(struct message_handshake_response);
-		pbuf->tot_len = pbuf->len;
+		// Send this packet out!
 		if (pbuf) {
+			pbuf->payload = (void *)malloc(sizeof(struct message_handshake_response));
+			if (pbuf->payload == NULL) {
+				free(pbuf);
+				return;
+			}
+			pbuf->len = sizeof(struct message_handshake_response);
+			pbuf->tot_len = pbuf->len;
+
 			if (memcpy(pbuf->payload, &packet, sizeof(struct message_handshake_response))) {
 				// OK!
 				wireguardif_peer_output(device->netif, pbuf, peer);
@@ -525,10 +547,15 @@ static void wireguardif_send_handshake_cookie(struct wireguard_device *device, c
 
 	// Send this packet out!
 	pbuf = (struct pbuf *)malloc(sizeof(struct pbuf));
-	pbuf->payload = (void *)malloc(sizeof(struct message_cookie_reply));
-	pbuf->len = sizeof(struct message_cookie_reply);
-	pbuf->tot_len = pbuf->len;
 	if (pbuf) {
+		pbuf->payload = (void *)malloc(sizeof(struct message_cookie_reply));
+		if (pbuf->payload == NULL) {
+			free(pbuf);
+			return;
+		}
+		pbuf->len = sizeof(struct message_cookie_reply);
+		pbuf->tot_len = pbuf->len;
+
 		if (memcpy(pbuf->payload, &packet, sizeof(struct message_cookie_reply))) {
 			wireguardif_device_output(device, pbuf, addr, port);
 		}

@@ -13,7 +13,8 @@ $ cd src <br>
 * debug mode <br>
 $ __sudo ./wireguard -d /etc/wireguard.conf__ <br>
 * daemon mode <br>
-$ __sudo ./wireguard -D__ <br>
+$ __sudo ./wireguard -D__ <br><br>
+Good luck~ 😎 <br>
 ## Limitations
   It only works in IPv4 environments.<br>
   Only one tunnel is created (client only).<br>
